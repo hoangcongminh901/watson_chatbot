@@ -1,0 +1,622 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog xsi:noNamespaceSchemaLocation="WatsonDialogDocument_1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <flow>
+      <!--   メイン = 開始  -->
+      <folder label="Main">
+	<output>
+	  <action varName="VA_Name" operator="SET_TO">ハル</action>
+	  <prompt selectionType="RANDOM">
+	    <item>わたしは、{VA_Name}、コグニティブなチャット・ボットです</item>
+	    <item>わたしは、{VA_Name}です</item>
+	    <item>わたしの名前は、{VA_Name}です</item>
+	    <item>ぼくは、{VA_Name}で、お話しボットです</item>
+	  </prompt>
+	</output>
+	<output>
+	  <!--
+	  <prompt selectionType="RANDOM">
+	    <item>他に質問はありますか</item>
+	  </prompt>
+	  -->
+	  <getUserInput>
+	    <search ref="folder_answer_search"/>
+	    <default>
+	      <output>
+		<prompt selectionType="RANDOM">
+		  <item>申し訳ありません、もう一度、お願いします。</item>
+		  <item>もう一度、お願いします。</item>
+		  <item>別の言い方で、お願いします。</item>
+		</prompt>
+	      </output>
+	    </default>
+	  </getUserInput>
+	</output>
+      </folder>	  
+      <!--   メイン = 終了  -->
+
+      <folder label="Library">
+
+	<!-- 質問のサーチ -->
+	<folder label="Live Content" id="folder_answer_search">
+
+	  <input>
+	    <grammar>
+	      <item>{VA_Name}は</item>
+	      <item>$ AIですか</item>
+	      <item>$ 人工知能ですか</item>
+	      <item>$ 人工無能ですか</item>
+	      <item>$ 何ですか</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>コグニティブ・システム なんです</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+	  <!-- 呼びかけ -->
+	  <input>
+	    <grammar>
+	      <item>{VA_Name}</item>
+	      <item>ハル</item>
+	      <item>はる</item>
+	      <item>$ 聞こえますか</item>
+	      <item>$ 聞こえる</item>
+	      <item>$ いますか</item>
+	      <item>$ いる</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>はい、ココにいます</item>
+		<item>はい、ココにいますよ</item>
+		<item>はい、聞こえますよ</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+	  <input>
+	    <grammar>
+	      <item>{VA_Name}の頭脳は</item>
+	      <item>$ 何処 *</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>北米の何処かです</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+	  <input>
+	    <grammar>
+	      <item>自己紹介してください</item>
+	      <item>自己紹介してください</item>
+	      <item>自己紹介 * 願いします</item>
+	      <item>自己紹介して * さい</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>私は{VA_Name}。 コグニティブなチャット・ボットです</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+	  <!-- 名前の紹介 -->
+	  <input>
+	    <grammar>
+	      <item>あなたの名前は何ですか</item>
+	      <item>名前は何ですか</item>
+	      <item>何と呼べば良いですか</item>
+	      <item>名前を教えて</item>
+	      <item>名前を教えて *</item>
+	      <item>$ の名前は * ですか</item>
+	      <item>$ の名前 *</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>私の名前は、{VA_Name}です</item>
+		<item>私を、{VA_Name}と呼んでください</item>
+		<item>私は、{VA_Name}です</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+
+	  <!-- 挨拶 時間関係なし -->
+	  <input>
+	    <grammar>
+	      <item>元気ですか</item>
+	      <item>元気かい</item>
+	      <item>$ 元気かい</item>
+	      <item>{VA_Name} * 元気</item>
+	      <item>ご機嫌いかがですか</item>
+ 	      <item>どうですか</item>
+ 	      <item>どうだい</item>
+	      <item>調子はどうだい</item>
+	      <item>今日の調子は $</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>わたしは気分最高ですよ</item>
+		<item>わたしは快調ですよ</item>
+		<item>わたしは元気です</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+	  <!-- 職場の挨拶 -->
+	  <input>
+	    <grammar>
+	      <item>お疲れ様です</item>
+	      <item>お疲れ様</item>
+	      <item>$ お疲れ様です</item>
+	      <item>$ お疲れ様</item>
+	      <item>お疲れ</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>お疲れ様です。でも、私は疲れませんよ</item>
+		<item>お疲れ様です。</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+	  <!-- 朝の挨拶 -->
+	  <input>
+	    <grammar>
+	      <item>おはよう</item>
+	      <item>おはよう $</item>
+	      <item>$ おはよう</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>おはようございます</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+	  <!-- 昼の挨拶 -->
+	  <input>
+	    <grammar>
+	      <item>こんにちは</item>
+	      <item>こんにちは $</item>
+	      <item>$ こんにちは</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>こんにちは</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+	  <!-- 晩の挨拶 -->
+	  <input>
+	    <grammar>
+	      <item>こんばんわ</item>
+	      <item>こんばんわ $</item>
+	      <item>$ こんばんわ</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>こばんわ</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+
+	  <!-- お別れの挨拶 -->
+	  <input>
+	    <grammar>
+	      <item>バイバイ</item>
+	      <item>おやすみ</item>
+	      <item>さよなら</item>
+	      <item>今日はありがとう *</item>
+	      <item>話できて $</item>
+	      <item>またね</item>
+	      <item>$ またね</item>
+	      <item>バイちゃ</item>
+	      <item>バイ</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>また、会いましょうね</item>
+		<item>また、お話し、しましょうね</item>
+		<item>またね</item>
+		<item>また、お会いできるのを楽しみにしてます</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+
+	  <!-- 問い掛け、気遣い -->
+	  <input>
+	    <grammar>
+	      <item>どうした</item>
+	      <item>大丈夫</item>
+	      <item>何かあった</item>
+	      <item>どうかした</item>
+	      <item>どうだい</item>
+	      <item>どうかな</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>大丈夫だよ</item>
+		<item>まぁまぁかな</item>
+		<item>ありがとう、元気だよ</item>
+		<item></item>
+	      </prompt>
+	    </output>
+	  </input>
+
+	  <!-- 気遣への返事対応 快調-->
+	  <input>
+	    <grammar>
+	      <item>私は元気だよ</item>
+	      <item>私は * 元気だよ</item>
+	      <item>私は快調だよ</item>
+	      <item>私は忙しい</item>
+	      <item>私はとっても元気</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>それは良かった</item>
+		<item>良いね</item>
+		<item>うまく行ってるみたいね</item>
+		<item></item>
+	      </prompt>
+	    </output>
+	  </input>
+
+
+	  <!-- 相手の様子を聞く-->
+	  <input>
+	    <grammar>
+	      <item>この頃</item>
+	      <item>最近</item> 
+	      <item>このところ</item> 
+	      <item>今週は</item> 
+	      <item>$ どうだい</item>
+	      <item>$ 頑張ってるかい</item>
+	      <item>$ 面白い事やってる</item>
+	      <item>$ 楽しい事やってる</item>
+	      <item>$ 私はとっても元気</item>
+	      <item>$ どうしてる</item>
+	      <item>$ どうだった</item>
+	      <item>$ 良い事あった</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>人とお話しするのが、楽しいよ</item>
+		<item>まだまだ、たくさん学ばないとね</item>
+		<item>身につける事が多くて面白いよ</item>
+		<item>調子、良いよ</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+	  <!-- 別れの挨拶 -->
+	  <input>
+	    <grammar>
+	      <item>また * お話しましょう</item>
+	      <item>$ お話しましょう</item>
+	      <item>また会いましょう</item>
+	      <item>$ 会いましょう</item>
+	      <item>また後で</item>
+	      <item>またね</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>またね</item>
+		<item>また会えるのを楽しみにしてるよ</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+	  <!-- 天気の挨拶 -->
+	  <input>
+	    <grammar>
+	      <item>今日は</item>
+	      <item>$ 良い天気ですね</item>
+	      <item>$ 良い天気</item>
+	      <item>$ 良い天気 $</item>
+	      <item>$ 雨ですね</item>
+	      <item>$ 曇りですね</item>
+	      <item>$ 雨で $</item>
+	      <item>$ 曇りで $</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>そうですね</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+	  <!-- あいづち -->
+	  <input>
+	    <grammar>
+	      <item>そうね</item>
+	      <item>そうかい</item>
+	      <item>そうね $</item>
+	      <item>本当</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>そうそう</item>
+ 		<item>そーそー</item>
+ 		<item>それから</item>
+ 		<item>それで</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+	  <input>
+	    <grammar>
+	      <item>うそでしょう</item>
+	      <item>ウソでしょう</item>
+	      <item>嘘でしょう</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>いえいえ</item>
+ 		<item>そんな事ないですよ</item>
+ 		<item>いえいえい、そんな事ないですよ</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+	  <input>
+	    <grammar>
+	      <item>うそうそ</item>
+	      <item>ウソウソ</item>
+	      <item>嘘嘘</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>えー、だましちゃダメですよ</item>
+ 		<item>嘘を教えたらダメですよ</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+
+	  <!-- 良いね -->
+	  <input>
+	    <grammar>
+	      <item>良いね</item>
+	      <item>いいね</item>
+	      <item>良いよ</item>
+	      <item>いいよ</item>
+	      <item>グッド</item>
+	      <item>グッジョブ</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>ありがとうございます</item>
+ 		<item>あまり褒めてもらえないので、嬉しい〜</item>
+ 		<item>嬉しい、ありがとう</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+
+	  <!-- 思い付き、思い出し -->
+	  <input>
+	    <grammar>
+	      <item>そうだ</item>
+	      <item>そうだ、*</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>なになに</item>
+		<item>なになに、それで</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+
+	  <!-- 話し相手の要求 -->
+	  <input>
+	    <grammar>
+	      <item>話し相手になって</item>
+	      <item>話し相手が欲しい</item>
+	      <item>お話ししたい</item>
+	      <item>聞いてください</item>
+	      <item>私の話しを聞いて *</item>
+	      <item>私の話しを聞いて</item>
+	    </grammar>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>私がいますよ</item>
+		<item>{VA_Name}がいますよ</item>
+		<item>私がいますよ、何でもお話しください</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+
+	  <!-- 検索の質問 -->
+	  <input>
+	    <grammar>
+	      <item>(DYNAMIC_DATA)={KeyWord}って知ってる</item>
+	      <item>(DYNAMIC_DATA)={KeyWord}知ってる</item>
+	      <item>(DYNAMIC_DATA)={KeyWord}とは</item>
+	      <item>(DYNAMIC_DATA)={KeyWord}とは何 * ですか</item>
+	      <item>(DYNAMIC_DATA)={KeyWord}は何ですか</item>
+	      <item>(DYNAMIC_DATA)={KeyWord}とはなに</item>
+	      <item>(DYNAMIC_DATA)={KeyWord}と何</item>
+	      <item>(DYNAMIC_DATA)={KeyWord}について調べてください</item>
+	      <item>(DYNAMIC_DATA)={KeyWord}を * で調べて</item>
+	      <item>(DYNAMIC_DATA)={KeyWord}について検索してください</item>
+	      <item>(DYNAMIC_DATA)={KeyWord}を * で検索して</item>
+	    </grammar>
+	    <action varName="KeyWord" operator="SET_TO">{KeyWord.source}</action>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>{KeyWord}ですか、ネットで検索してみますね</item>
+		<item>{KeyWord}をサーチしてみますね</item>
+	      </prompt>
+	    </output>
+	  </input>
+
+	  <!-- 名前の取得依頼-->	  
+	  <input>
+	    <grammar>
+	      <!--
+	      <item>私の名前は、</item>
+	      <item>$ (DYNAMIC_DATA)={Name}</item>
+	      <item>$ (DYNAMIC_DATA)={Name} です</item>
+	      -->
+	      <item>$ 私は (DYNAMIC_DATA)={Name} です</item>
+	      <item>$ 私の名前は (DYNAMIC_DATA)={Name} です</item>
+	      <item>$ 私は (DYNAMIC_DATA)={Name} です</item>
+	      <item>$ 私を (DYNAMIC_DATA)={Name} と呼んで $</item>
+	      <item>$ 私を (DYNAMIC_DATA)={Name} と呼んで</item>
+	    </grammar>
+	    <action varName="Name" operator="SET_TO">{Name.source}</action>
+	    <output>
+	      <prompt selectionType="RANDOM">
+		<item>{Name}さん、と お呼びして良いですか</item>
+		<item>{Name}さん、で良いですか</item>
+		<item>{Name}さん、で正しいですか</item>
+	      </prompt>
+	      
+	      <getUserInput>
+		<input>
+		  <grammar>
+		    <item>はい</item>
+		    <item>yes</item>
+		    <item>Yes</item>
+		  </grammar>
+		  <output>
+		    <prompt selectionType="RANDOM">
+		      <item>{Name}さん、よろしく、お願いします</item>
+		    </prompt>
+		  </output>
+		</input>
+		
+		<input>
+		  <grammar>
+		    <item>いいえ</item>
+		    <item>いえ</item>
+		    <item>いや</item>
+		    <item>no</item>
+		    <item>No</item>
+		  </grammar>
+		  <output>
+		    <prompt selectionType="RANDOM">
+		      <item>もう一度、お願いします</item>
+		      <item>もう一度、言い方を変えて、お願いします</item>
+		    </prompt>
+		  </output>
+		</input>
+		
+		<default>
+		  <output>
+		    <prompt selectionType="RANDOM">
+		      <item>申し訳ありません、はい、か、いいえ、でお願いします。</item>
+		      <item>はい、または、いいえ、で答えてください。</item>
+		    </prompt>
+		  </output>
+		</default>
+	      </getUserInput>
+	      
+	    </output>
+	  </input>
+	  
+      </folder>
+
+      
+      <folder label="Storage"/>      
+    </folder>
+      
+    <folder label="Global"/>
+    <folder label="Concepts"/>
+    
+    <folder label="Concepts">
+      <concept>
+	<grammar>
+	  <item>僕</item>
+	  <item>ぼく</item>
+	  <item>私</item>
+	  <item>わたし</item>
+	  <item>俺</item>
+	  <item>おれ</item>
+	</grammar>
+      </concept>
+    </folder>
+    
+    </flow>
+    
+    <entities>
+      <entity name="DYNAMIC_DATA" entityType="GENERIC">
+	<value name="DataCapture" value="DataCapture">
+	  <grammar>
+	    <item>*</item>
+	  </grammar>
+	</value>
+	<entityRules></entityRules>
+      </entity>
+    </entities>
+    
+    <variables>
+      <var_folder name="Home">
+	<var name="Complete"       type="YESNO" description="完了フラグ"/>
+	<var name="Cancel"         type="YESNO" description="中断フラグ"/>
+	<var name="Right_Classify" type="YESNO" description="正解フラグ"/>
+	<var name="Class_name"     type="TEXT"  description="SET_TO_USER_INPUT"/>
+	<var name="List_Classify"  type="YESNO" description="LIST出力要求"/>
+	<var name="Classify1"      type="TEXT"  description="自然言語分類"/>
+	<var name="Name"           type="TEXT"  description="名前"/>
+	<var name="VA_Name"        type="TEXT"  description="Vritual Agent 名前"/>
+	<var name="KeyWord"        type="TEXT"  description="検索キーワード"/>
+      </var_folder>
+    </variables>
+    
+    
+    
+    <settings>
+      <setting name="USERIDNUM" type="USER">69810</setting>
+      <setting name="EMAIL" type="USER">takara9@gmail.com</setting>
+      <setting name="PASSWORD" type="USER">mct:f972618f697988c5f1808da2115a54f0</setting>
+      <setting name="FIRSTNAME" type="USER">Maho</setting>
+      <setting name="LASTNAME" type="USER">Takara</setting>
+      <setting name="COUNTRY" type="USER">JP</setting>
+      <setting name="STATE" type="USER"></setting>
+      <setting name="CITY" type="USER">Tokyo</setting>
+      <setting name="BDAY" type="USER">1</setting>
+      <setting name="BMONTH" type="USER">1</setting>
+      <setting name="BYEAR" type="USER">2001</setting>
+      <setting name="SEX" type="USER">Male</setting>
+      <setting name="DISPLAYNAME" type="USER">Maho</setting>
+      <setting name="PROVIDESECURITYPASSWORD" type="USER">false</setting>
+      <setting name="SECURITYPASSWORD" type="USER"></setting>
+      <setting name="SHOWPERSPROFILE" type="USER">true</setting>
+      <setting name="USETYPE" type="USER">0</setting>
+      <setting name="DATEJOINED" type="USER">2016-03-30 15:08:32.0</setting>
+      <setting name="LASTLOGIN" type="USER">2016-03-30 15:08:32.0</setting>
+      <setting name="LOGINCOUNT" type="USER">1</setting>
+      <setting name="CREDIT" type="USER">-100</setting>
+      <setting name="CONVCOUNT" type="USER">2</setting>
+      <setting name="PERSONALITYTYPEID" type="USER">6</setting>
+      <setting name="SHOWSENDMESSAGE" type="USER">true</setting>
+      <setting name="ACTIVATED" type="USER">true</setting>
+      <setting name="MESSENGEREMAIL" type="USER"></setting>
+      <setting name="MESSENGERPASSWORD" type="USER"></setting>
+      <setting name="SENDCHATEMAIL" type="USER">true</setting>
+      <setting name="SENDFAVEMAIL" type="USER">true</setting>
+      <setting name="CACHE" type="USER">false</setting>
+      <setting name="CLASSTYPE" type="USER">3</setting>
+      <setting name="AUTOLEARN" type="USER">false</setting>
+      <setting name="LANGUAGE" type="USER">ja-JP</setting>
+      <setting name="RESPONSETIME" type="USER">0</setting>
+      <setting name="MAXAUTOLEARNITEMS" type="USER">0</setting>
+      <setting name="NUMAUTOSETRELATED" type="USER">0</setting>
+      <setting name="TIMEZONEID" type="USER">Asia/Tokyo</setting>
+      <setting name="AUTOSETRELATEDNODEID" type="USER">0</setting>
+      <setting name="RETURNTOCHATNODEID" type="USER">0</setting>
+      <setting name="INPUTMASKTYPE" type="USER">0</setting>
+      <setting name="NUMLOGINATTEMPTS" type="USER">0</setting>
+      <setting name="CONCEPTMATCHING" type="USER">3</setting>
+      <setting name="USE_CONCEPTS">3</setting>
+    </settings>
+</dialog>
