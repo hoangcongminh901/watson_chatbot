@@ -1,14 +1,18 @@
 #!/usr/bin/env node
 //
-// SMSから日本語テキストのメッセージを受けて、
-// NLCで自然言語分類して、リピートする
-// Maho Takara
+// 日本語テキストのメッセージを受けて、
+// NLCで自然言語分類して、応答するチャットボット
 //
+// 作者 Maho Takara
+//
+// Copyright (C) 2016 International Business Machines Corporation 
+// and others. All Rights Reserved. 
+// 
 // 2016/5/1  初版
 // 2016/5/20 Twitter バージョン
 // 2016/6/21 LINE API BOTバージョン
 // 2016/7/28 NLCを２段階から1段階へ変更
-// 2016/8/2  node v4.4.7 に対応　それまでは、v0.12.12
+// 2016/8/2  node v4.4.7 に対応
 // 2016/8/4  端末相手ごとに、切り分けるセッション管理追加
 // 2016/8/8  大幅にフィファクタリング
 //
