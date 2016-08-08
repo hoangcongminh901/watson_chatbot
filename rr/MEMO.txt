@@ -1,0 +1,23 @@
+
+クリーンナップ
+$ ./delete_ranker.js 
+$ ./delete_solr_collection.js 
+$ ./delete_solr_cluster.js 
+
+
+新規構築
+$ ./create_solr_cluster.js 
+$ ./getinfo_solr_clustor.js 
+  "solr_cluster_status"が、"NOT_AVAILABLE" から "READY" に変わるまで待つ
+
+$ ./upload_solr_config_ja.js 
+$ ./create_solr_collection.js 
+$ ./index_doc_ja.js 
+$ ./create_ranker_with_data.js
+$ ./get_ranker_info.js 
+  "status"が、"Training" から "Available" に変わるまで待つ
+
+テスト
+$ ./search_rank.js
+$ ./search_solr_std_query_ja.js
+
