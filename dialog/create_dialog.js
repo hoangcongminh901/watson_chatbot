@@ -1,15 +1,13 @@
 #!/usr/bin/env node
 //
 // テンプレートを読ませてダイアログを作る
+// 作成したダイアログのIDと名前はCloudant のwatson_credentialsのDB
+// に格納される。
 // 
-// 作者 Maho Takara    takara@jp.ibm.com
+// Maho Takara 
 //
-// Copyright (C) 2016 International Business Machines Corporation 
-// and others. All Rights Reserved. 
-// 
 // 2016/3/24 初版
-// 2016/5/8  Cloudantと連携した形に修正
-// 2016/8/8  シンプル化
+// 
 //
 
 var fs     = require('fs');
@@ -18,10 +16,12 @@ var auth   = require('./watson_dialog_credentials.json');
 var cnf    = require('./dialog_config.json');
 
 var dialog = watson.dialog(auth.dialog[0].credentials);
+
+var itemno = 4;
 var params = {
-    name: cnf.name,
-    file: fs.createReadStream(cnf.file),
-    language: cnf.lang
+    name: cnf.dialog[itemno].name,
+    file: fs.createReadStream(cnf.dialog[itemno].file),
+    language: cnf.dialog[itemno].lang
 }
 
 dialog.createDialog( params, function(err,resp) {
@@ -33,4 +33,3 @@ dialog.createDialog( params, function(err,resp) {
 	fs.writeFile( "dialog_id.json", JSON.stringify(resp,null,'  '));
     }
 });
-

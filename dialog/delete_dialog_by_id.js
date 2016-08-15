@@ -1,13 +1,10 @@
 #!/usr/bin/env node
 //
-// Watson からID を指定してダイアログを削除する
 //
-// 作者 Maho Takara    takara@jp.ibm.com
+// 作成したダイアログをダイアログ名を指定して削除する
+// Watson Dialog からと Cloudant の watson_credentials　の二つから削除する 
 //
-// Copyright (C) 2016 International Business Machines Corporation 
-// and others. All Rights Reserved. 
-//
-// 2016/5/8 初版
+// 2016/5/8 Maho Takara
 //
 //
 
@@ -17,9 +14,8 @@ var auth   = require('./watson_dialog_credentials.json');
 var cnf    = require('./dialog_config.json');
 var dialog = watson.dialog(auth.dialog[0].credentials);
 
-
 var params = {
-    dialog_id: '30f3ac77-5ebd-49ee-a359-59002e6dccf8'
+    dialog_id: 'b7d3e91e-55c8-4a74-8ec0-b1067c6f063c'
 }
 
 dialog.deleteDialog(params, function(err,resp) {

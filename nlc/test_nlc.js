@@ -1,15 +1,4 @@
 #!/usr/bin/env node
-//
-// NLCの単体テスト用
-// 
-// 作者 Maho Takara    takara@jp.ibm.com
-//
-// Copyright (C) 2016 International Business Machines Corporation 
-// and others. All Rights Reserved. 
-// 
-// 2016/3/24 初版
-//
-
 var fs = require('fs');
 var watson = require('watson-developer-cloud');
 var wnc = require('./watson_nlc_credentials.json');

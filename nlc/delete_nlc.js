@@ -1,14 +1,4 @@
 #!/usr/bin/env node
-//
-// NLCを削除する
-// 
-// 作者 Maho Takara    takara@jp.ibm.com
-//
-// Copyright (C) 2016 International Business Machines Corporation 
-// and others. All Rights Reserved. 
-// 
-// 2016/3/24 初版
-//
 
 var fs = require('fs');
 var watson = require('watson-developer-cloud');

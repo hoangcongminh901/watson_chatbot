@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 //
-// Watson に登録したダイアログを削除する
 //
-// 作者 Maho Takara    takara@jp.ibm.com
+// 作成したダイアログをダイアログ名を指定して削除する
+// Watson Dialog からと Cloudant の watson_credentials　の二つから削除する 
 //
-// Copyright (C) 2016 International Business Machines Corporation 
-// and others. All Rights Reserved. 
+// 2016/5/8 Maho Takara
+//
 //
 
 var fs     = require('fs');

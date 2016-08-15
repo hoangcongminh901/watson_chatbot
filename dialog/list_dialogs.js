@@ -1,13 +1,9 @@
 #!/usr/bin/env node
 //
-// Watson に登録された Dialog のリストを取得する
-//
-// 作者 Maho Takara    takara@jp.ibm.com
-//
-// Copyright (C) 2016 International Business Machines Corporation 
-// and others. All Rights Reserved. 
+// ダイアログのリストを Watson から取得する
 // 
-// 2016/3/24 inital 
+// Maho Takara
+// 2016/3/24 v1
 // 2016/5/8  update
 //
 

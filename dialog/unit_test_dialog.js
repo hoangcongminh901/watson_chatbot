@@ -1,13 +1,8 @@
 #!/usr/bin/env node
 //
-// Watson Dialog 単体テスト用
-//
-//
-// 作者 Maho Takara    takara@jp.ibm.com
-//
-// Copyright (C) 2016 International Business Machines Corporation 
-// and others. All Rights Reserved. 
-//
+// ワトソンダイアログに、メッセージを送る
+// 返ってきたメッセージをMQTTで端末へ返す
+// 
 // Maho Takara
 // 2016/4/9 1st
 // 2016/5/8 update

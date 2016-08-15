@@ -1,18 +1,14 @@
 #!/usr/bin/env node
 //
-// 日本語テキストのメッセージを受けて、
-// NLCで自然言語分類して、応答するチャットボット
+// SMSから日本語テキストのメッセージを受けて、
+// NLCで自然言語分類して、リピートする
+// Maho Takara
 //
-// 作者 Maho Takara
-//
-// Copyright (C) 2016 International Business Machines Corporation 
-// and others. All Rights Reserved. 
-// 
 // 2016/5/1  初版
 // 2016/5/20 Twitter バージョン
 // 2016/6/21 LINE API BOTバージョン
 // 2016/7/28 NLCを２段階から1段階へ変更
-// 2016/8/2  node v4.4.7 に対応
+// 2016/8/2  node v4.4.7 に対応　それまでは、v0.12.12
 // 2016/8/4  端末相手ごとに、切り分けるセッション管理追加
 // 2016/8/8  大幅にフィファクタリング
 //
@@ -39,11 +35,16 @@ var dialog_auth = require('./dialog/watson_dialog_credentials.json');
 var dialog = watson.dialog(dialog_auth.dialog[0].credentials);
 
 // Watson RR
-var rr_cnf   = require('./rr/rr_config.json');
-var rr_pra   = require('./rr/cluster_id.json');
-var rr_auth  = require('./rr/watson.rtrv_rank.auth.json');
+var rr_cnf   = require('./rr1/rr_config.json');
+var rr_pra   = require('./rr1/cluster_id.json');
+var rr_auth  = require('./rr1/watson.rtrv_rank.auth.json');
 var rr = watson.retrieve_and_rank(rr_auth.credentials);
 var qs = require('qs');
+
+// Watson Visual Recognition
+var vr_auth = require('./vr/visual_recognition_credentials.json');
+var vr = watson.visual_recognition(vr_auth.credentials);
+var sleep = require('sleep-async')();
 
 // 時間
 var moment = require("moment");
@@ -66,10 +67,12 @@ var line_api = require('./line_api/lib_line_api.js');
 
 
 // 動作モード
-//  0: チャットモード、 1: 学習モード
-var nlc_chat_mode = 1;
-var dialog_mode =  2;
-var session = {};  // セッション情報、配列で全体を保有
+const NLC_MODE = 1;
+const DIALOG_MODE =  2;
+const RR_MODE =  3;
+
+// セッション情報、配列で全体を保有
+var session = {};  
 
 
 //=============================================
@@ -92,7 +95,7 @@ linebot.on('message', function (msg) {
 		linebot.getProfile(msg.result[0].content.from,function(err,profile) {
 		    session[msg.result[0].content.from]
 			= { count: 0, 
-			    mode: nlc_chat_mode,
+			    mode: NLC_MODE,
 			    profile: profile,
 			    start_time: time,
 			    last_time: time
@@ -136,7 +139,17 @@ linebot.on('message', function (msg) {
 	    else if ( msg.result[0].content.contentType == 2) {
 		write_log("=== LINEから画像受信 ===");
 		console.log(msg.result[0].content);
-		linebot.getContent(msg.result[0].content.id,"test.jpg");
+		var uploaded_file = 'vr/images/' + msg.result[0].content.id + '.jpg';
+		linebot.getContent(msg.result[0].content.id,uploaded_file);
+		session[msg.result[0].content.from].image_file = uploaded_file
+		
+		watson_vr(session[msg.result[0].content.from],function(err,watson_ans) {
+		    // 送信元へメッセージ送信
+		    linebot.sendMessage(
+			msg.result[0].content.from,
+			watson_ans.phrase);
+		    //console.log(session[msg.result[0].content.from]);
+		});
 	    }
 	    // 音源
 	    else if ( msg.result[0].content.contentType == 4) {
@@ -167,7 +180,7 @@ linebot.on('message', function (msg) {
  */
 function watson_chatbot_main( session_handle, callback) {
 
-    if (session_handle.mode == dialog_mode) {
+    if (session_handle.mode == DIALOG_MODE) {
 	// ダイアログ（対話）機能
 	watson_dialog(
 	    session_handle,
@@ -176,7 +189,14 @@ function watson_chatbot_main( session_handle, callback) {
 		write_log("ワトソン> " + dialog_ans.phrase);
 		callback(err,dialog_ans);
 	    });
-	
+    } else if ( session_handle.mode == RR_MODE) {
+	watson_retrieve(
+	    session_handle,
+	    function(err,rr_ans) {
+		write_log("ワトソン> " + rr_ans.phrase);
+		callback(err,rr_ans);
+	    });
+	session_handle.mode = NLC_MODE;
     } else {
 	// 自然言語分類
 	watson_nlc(
@@ -198,20 +218,32 @@ function watson_nlc(session_handle,callback) {
 	    write_log("error:", err);
 	    callback(err,null);
 	} else {
+
+	    // 判別されたクラスをリスト
 	    for(var i = 0;i < resp.classes.length; i++) {
-		write_log("class_name " + resp.classes[i].class_name);
-		write_log("confidence " + resp.classes[i].confidence);
+		if (resp.classes[i].confidence > 0.2) {
+		    write_log("クラス=" + resp.classes[i].class_name 
+			      + "  確信度= " + parseInt(resp.classes[i].confidence * 100 )
+			      + "%");
+		}
 	    }
-	    if (resp.classes[0].confidence > 0.5) {
-		take_action(session_handle, resp.classes[0].class_name, function(err,reply) {
+
+	    // セッション情報にNLCのトップクラスをセット
+	    session_handle.nlc_class  = resp.classes[0].class_name;
+	    session_handle.confidence = resp.classes[0].confidence;
+	    session_handle.nlc_pst    = parseInt(session_handle.confidence * 100);
+	    
+
+	    // 確信度 70%　で対応を検索
+	    if (session_handle.confidence > 0.7) {
+		take_action(session_handle, function(err,reply) {
 		    callback(err,reply);
 		});
 	    } else {
-		pst = parseInt(resp.classes[0].confidence * 100);
 		msg = "確度 " 
-		    + pst + "％で「" 
-		    + resp.classes[0].class_name
-		    + "」と推定されますが、"
+		    + session_handle.nlc_pst + "％で「" 
+		    + session_handle.nlc_class
+		    + "」と判定されますが、"
 		+ "確度が低いので、別の言い方でお願いします。"
 		callback(null, { phrase: msg });
 	    }
@@ -236,10 +268,10 @@ function getRandomInt(max) {
 /*
   対応アクションの検索結果に基づき応答を実施する
 */
-function take_action(session_handle,nlc_result,callback) {
+function take_action(session_handle,callback) {
 
     // データベースからアクションを決定
-    pdb.find( {"selector": {"class": nlc_result}} ,function(err, body) {
+    pdb.find( {"selector": {"class": session_handle.nlc_class}} ,function(err, body) {
 	if (err) {
 	    write_log("find error:", err);
 	    callback(err,null);
@@ -259,9 +291,9 @@ function take_action(session_handle,nlc_result,callback) {
 	    var candidate_function_i = 0; // 候補配列添字 機能
 	    var candidate_dialog = [];    // Dialog候補
 	    var candidate_dialog_i = 0;   // Dialog候補配列添字 
-	    var candidate_rr   = [];      // RR候補
-	    var candidate_rr_i = 0;       // RR候補配列添字 
-
+	    var candidate_rr    = [];     // RR候補
+	    var candidate_rr_sc = [];     // RR候補コレクション
+	    var candidate_rr_i  = 0;      // RR候補配列添字 
 
 	    for (var i = 0; i < body.docs.length; i++) {
 		console.log("dialog reply = ", body.docs[i].dialog_name);
@@ -283,10 +315,12 @@ function take_action(session_handle,nlc_result,callback) {
 		    candidate_dialog[candidate_dialog_i++] = body.docs[i].dialog_name;
                 }
 
-		// RR を登録
+		// RR を登録 rank名とcollection名を取得する
 		if (body.docs[i].rr_name.length > 0) {
                     write_log("rr_name = " + body.docs[i].rr_name);
-		    candidate_rr[candidate_rr_i++] = body.docs[i].rr_name;
+		    candidate_rr[candidate_rr_i] = body.docs[i].rr_name;
+		    candidate_rr_sc[candidate_rr_i] = body.docs[i].sc_name;
+		    candidate_rr_i++;
                 }
 	    }
 
@@ -299,11 +333,12 @@ function take_action(session_handle,nlc_result,callback) {
 		var decided_function_i = getRandomInt( candidate_function_i );
 		eval( candidate_function[decided_function_i]
 		      + "(session_handle,function(err,rsp){callback(err,rsp)});");
+
 	    } else if ( candidate_reply_i > 0) {
 		// ダイアログを選択
 		var decided_reply_i = getRandomInt( candidate_reply_i );
 		if ( candidate_dialog_i > 0) {
-		    session_handle.mode = dialog_mode;
+		    session_handle.mode = DIALOG_MODE;
 		    var decided_dialog_i = getRandomInt( candidate_dialog_i );
 		    session_handle.dialog = {
 			input: session_handle.input_text,
@@ -316,7 +351,11 @@ function take_action(session_handle,nlc_result,callback) {
 			    callback(err,dialog_ans);
 			});
 		} else if ( candidate_rr_i > 0) {
-		    session_handle.rr_name = candidate_rr[getRandomInt(candidate_rr_i)];
+		    // RRを選択
+		    
+		    var i_ans = getRandomInt(candidate_rr_i);
+		    session_handle.rr_name = candidate_rr[i_ans];
+		    session_handle.sc_name = candidate_rr_sc[i_ans];
 		    watson_rr(
 			session_handle,
 			function(err,ans) {
@@ -324,7 +363,16 @@ function take_action(session_handle,nlc_result,callback) {
 			    callback(err,ans);
 			});
 		}
-		callback(null, {phrase : candidate_reply[decided_reply_i]});
+
+		// NLCレベルでの応答
+		msg = "確度 " 
+		    + session_handle.nlc_pst + "％で\n「" 
+		    + session_handle.nlc_class
+		    + "」と判断\n\n";
+
+		msg = msg + candidate_reply[decided_reply_i];
+		callback(null, {phrase : msg});
+
 	    } else {
 		callback(null, {phrase : 'なんと反応して良いか解りません'});
 	    }
@@ -421,7 +469,7 @@ function watson_dialog(session_handle, callback) {
 			///////////////////////////////////////////////////
 			// ここにDIALOG で取得した内容に応じた処理を入れる
 			///////////////////////////////////////////////////
-			session_handle.mode = nlc_chat_mode;
+			session_handle.mode = NLC_MODE;
 			delete session_handle.dialog;
 		    }
 		}
@@ -440,7 +488,6 @@ function watson_rr(session_handle, callback) {
 	    console.log('watson rr error: ', err);
 	} else {
 	    var rr_id = null;
-	    //console.log(JSON.stringify(resp, null, 2));
 	    for (var i = 0; i < resp.rankers.length; i++) {
 		if (resp.rankers[i].name == session_handle.rr_name) {
 		    rr_id = resp.rankers[i].ranker_id;
@@ -452,9 +499,8 @@ function watson_rr(session_handle, callback) {
 	    }
 
 	    rr_pra.config_name = rr_cnf.config_name;
-	    rr_pra.collection_name = rr_cnf.collection_name;
+	    rr_pra.collection_name = session_handle.sc_name
 	    rr_pra.wt = 'json';
-	    //console.log("rr param = ", rr_pra);
 
 	    var query = qs.stringify({q: session_handle.input_text, ranker_id: rr_id, fl: 'id,title,body'});
 	    var solrClient = rr.createSolrClient(rr_pra);
@@ -464,9 +510,20 @@ function watson_rr(session_handle, callback) {
 		    callback(null, { phrase: "該当の回答がありません" });
 		}
 		else {
-		    //console.log(JSON.stringify(resp.response.docs, null, 2));
 		    if (resp.response.docs.length > 0) {
-			callback(null, { phrase: resp.response.docs[0].body[0] });
+
+			var msg = "回答の候補は、";
+			for (var i=0;i < resp.response.docs.length; i++) {
+			    console.log("R&R Candidate = ",resp.response.docs[i].id," ",resp.response.docs[i].title);
+			    if ( i < 3 ) {
+				msg = msg + "[" + resp.response.docs[i].id + "] " 
+				    + resp.response.docs[i].title + "、";
+			    }
+			}
+			msg = msg + "[番号]を答えると内容を返すよ";
+			session_handle.mode = RR_MODE;
+			callback(null, { phrase: msg});
+
 		    } else {
 			callback(null, { phrase: "該当の回答がありません" });
 		    }
@@ -474,4 +531,120 @@ function watson_rr(session_handle, callback) {
 	    });
 	}
     });
+}
+
+
+function watson_retrieve(session_handle,callback) {
+
+    var msg;
+    var solrClient = rr.createSolrClient(rr_pra);
+    var query = solrClient.createQuery();
+
+    rr_pra.config_name = rr_cnf.config_name;
+    rr_pra.collection_name = session_handle.sc_name
+    rr_pra.wt = 'json';
+    
+    query.q({ 'id' : session_handle.input_text });    
+
+    solrClient.search(query, function(err, searchResponse) {
+	if(err) {
+	    console.log('Error searching for documents: ' + err);
+	}
+	else {
+	    console.log('Found ' + searchResponse.response.numFound + ' documents.');
+	    console.log(JSON.stringify(searchResponse.response.docs, null, 2));
+	    if ( searchResponse.response.numFound > 0) {
+		msg = searchResponse.response.docs[0].body[0];
+	    } else  {
+		msg = "指定番号の文書がありませんでした";
+	    }
+	}
+	callback(null, { phrase: msg});
+    });
+}
+
+
+
+// Watson Visual Recognition
+// npm install sleep-async
+function watson_vr(session_handle, callback) {
+
+    // ファイルのアップロードを待つ
+    sleep.sleep(2000, function(){
+	var params = {
+	    images_file: fs.createReadStream(session_handle.image_file)
+	};
+	
+	vr.classify(params, function(err, res) {
+	    if (err) {
+		console.log(err);
+	    } else {
+		console.log("vr_classify = ", JSON.stringify(res, null, 2));
+		if (res.images[0].classifiers[0].classes.length > 0) {
+
+
+		    if (res.images[0].classifiers[0].classes[0].class == 'person') {
+
+			var params_face = {
+			    images_file: fs.createReadStream(session_handle.image_file)
+			};
+
+			vr.detectFaces(params_face, function(err, res) {
+			    if (err) {
+				console.log(err);
+			    } else {
+				console.log("vr_face_detect = ", JSON.stringify(res, null, 2));
+				var message;
+				if (res.images[0].faces.length > 0) {
+				    var age,sex;
+				    if (res.images[0].faces[0].age.min != undefined) {
+					age = res.images[0].faces[0].age.min;
+				    } else {
+					age = res.images[0].faces[0].age.max;
+				    };
+				    if (res.images[0].faces[0].gender.gender == "MALE") {
+					sex = "男性";
+				    } else {
+					sex = "女性";
+					if (age > 30) {
+					    age = age - 5;  // rip service
+					}
+				    };
+				    message = "この方は、"
+					+ parseInt(res.images[0].faces[0].age.score *100)
+					+ "％で"
+					+ age
+					+ "歳、"
+					+ parseInt(res.images[0].faces[0].gender.score *100)
+					+ "％で"
+					+ sex
+					+ "と判別されます";
+				} else {
+				    message = "お顔を検出できませんでした";
+				}
+				callback(null,{ phrase: message });
+			    }
+			});
+
+		    } else {
+			// 候補を列挙
+			var message = "この画像は、"
+			for (var i = 0; i < res.images[0].classifiers[0].classes.length; i++) {
+			    message = message 
+				+ parseInt(res.images[0].classifiers[0].classes[i].score * 100 ) 
+				+ "％で "
+				+ res.images[0].classifiers[0].classes[i].class + " "
+			}
+			message = message + "と認識されます。"
+			callback(null,{ phrase: message });
+		    }
+
+		} else {
+		    var message = "この画像を判別できませんでした m(_ _)m"
+		    callback(null,{ phrase: message });
+		}
+	    }
+	});
+    });
+    
 }
