@@ -1,10 +1,16 @@
 #!/usr/bin/env node
-// CouchDB / Cloudant 
 //
-// インデックスを利用して検索
+// Cloudant のデータベースから索引検索する
+//   単体テスト用
+//
+// 作者 Maho Takara    takara@jp.ibm.com
+//
+// Copyright (C) 2016 International Business Machines Corporation 
+// and others. All Rights Reserved. 
 // 
-// 2016/5/4 Maho Takara
+// 2016/8/15  初版
 //
+
 var cred = require('./cloudant_credentials_id.json');
 var Cloudant = require('cloudant')
 var cloudant = Cloudant(cred.credentials.url);
