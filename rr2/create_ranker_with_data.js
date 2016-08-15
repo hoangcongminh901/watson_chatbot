@@ -1,8 +1,17 @@
 #!/usr/bin/env node
 //
-// トレーニングデータを作成する
+// RankerのトレーニングデータをCSVファイルから作成する
+// 生成したトレーニングデータでrankerのトレーニングを開始する
+//     トレーニングの状況はget_ranker_info.jsで確認する
+//
+//
+// 作者 Maho Takara    takara@jp.ibm.com
+//
+// Copyright (C) 2016 International Business Machines Corporation 
+// and others. All Rights Reserved. 
 // 
-// 2016/8/6 Maho Takara
+// 2016/8/15  初版
+//
 //
 
 var watson = require('watson-developer-cloud');
