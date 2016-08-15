@@ -25,12 +25,12 @@ https://github.com/moment/moment/
 
 // 天気APIに接続
 weather = require('openweathermap');
-var owm = require('./openweathermap.json');
+var owm = require('../openweathermap.json');
 weather.defaults(owm);
 
 // Cloudantに接続
 var moment = require('moment');
-var cred = require('./cloudant_credentials_id.json');
+var cred = require('../cloudant_credentials_id.json');
 var Cloudant = require('cloudant')
 var cloudant = Cloudant(cred.credentials.url);
 var dbn  = require('./weather_database_name.json');
