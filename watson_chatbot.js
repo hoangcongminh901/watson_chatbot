@@ -514,11 +514,11 @@ function watson_rr(session_handle, callback) {
 			for (var i=0;i < resp.response.docs.length; i++) {
 			    console.log("R&R Candidate = ",resp.response.docs[i].id," ",resp.response.docs[i].title);
 			    if ( i < 3 ) {
-				msg = msg + "[" + resp.response.docs[i].id + "] " 
+				msg = msg + "\n[" + resp.response.docs[i].id + "] " 
 				    + resp.response.docs[i].title + "、";
 			    }
 			}
-			msg = msg + "[番号]を答えると内容を返すよ";
+			msg = msg + "\n[番号]を答えると内容を返すよ";
 			session_handle.mode = RR_MODE;
 			callback(null, { phrase: msg});
 
