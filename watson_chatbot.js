@@ -282,98 +282,40 @@ function take_action(session_handle,callback) {
 	  外部機能があれば実行して、応答メッセージを決める
 	 */
 	if (body.docs.length) {
-	    // 検索結果から反応を決める
-	    var candidate_reply = [];     // 応答フレーズ候補
-	    var candidate_reply_i = 0;    // 候補配列添字 応答
-	    var candidate_function = [];  // 外部機能候補
-	    var candidate_function_i = 0; // 候補配列添字 機能
-	    var candidate_dialog = [];    // Dialog候補
-	    var candidate_dialog_i = 0;   // Dialog候補配列添字 
-	    var candidate_rr    = [];     // RR候補
-	    var candidate_rr_sc = [];     // RR候補コレクション
-	    var candidate_rr_i  = 0;      // RR候補配列添字 
 
-	    for (var i = 0; i < body.docs.length; i++) {
-		console.log("dialog reply = ", body.docs[i].dialog_name);
+	    var ans_i = getRandomInt( body.docs.length);
+	    var msg;
+	    // NLCレベルでの応答
+	    msg = "確度 " 
+		+ session_handle.nlc_pst + "％で\n「" 
+		+ session_handle.nlc_class
+		+ "」と判断\n\n";
+	    
+	    msg = msg + body.docs[ans_i].reply_phrase;
+	    callback(null, {phrase : msg});
 
-		// 応答フレーズは必ず登録されているとする
-		// 解答候補の配列にセット
-		write_log("phrase = " + body.docs[i].reply_phrase);
-		candidate_reply[candidate_reply_i++] = body.docs[i].reply_phrase;
-
-		// 外部機能のコール先を登録
-		if (body.docs[i].reaction.length > 0) {
-                    write_log("function = " + body.docs[i].reaction);
-		    candidate_function[candidate_function_i++] = body.docs[i].reaction;
-                }
-
-		// Dialog を登録
-		if (body.docs[i].dialog_name.length > 0) {
-                    write_log("dialog_name = " + body.docs[i].dialog_name);
-		    candidate_dialog[candidate_dialog_i++] = body.docs[i].dialog_name;
-                }
-
-		// RR を登録 rank名とcollection名を取得する
-		if (body.docs[i].rr_name.length > 0) {
-                    write_log("rr_name = " + body.docs[i].rr_name);
-		    candidate_rr[candidate_rr_i] = body.docs[i].rr_name;
-		    candidate_rr_sc[candidate_rr_i] = body.docs[i].sc_name;
-		    candidate_rr_i++;
-                }
-	    }
-
-	    /*
-	     乱数で反応を決定
-	       経験知,感情,相手の様子から反応を決められると良いが。。。
-	    */
-	    // 外部関数があれば優先する
-	    if (candidate_function_i > 0) {
-		var decided_function_i = getRandomInt( candidate_function_i );
-		eval( candidate_function[decided_function_i]
+	    if (body.docs[ans_i].reaction.length > 0) {
+		eval( body.docs[ans_i].reaction 
 		      + "(session_handle,function(err,rsp){callback(err,rsp)});");
-
-	    } else if ( candidate_reply_i > 0) {
-		// ダイアログを選択
-		var decided_reply_i = getRandomInt( candidate_reply_i );
-		if ( candidate_dialog_i > 0) {
-		    session_handle.mode = DIALOG_MODE;
-		    var decided_dialog_i = getRandomInt( candidate_dialog_i );
-		    session_handle.dialog = {
-			input: session_handle.input_text,
-			name: candidate_dialog[decided_dialog_i]
-		    };
-		    watson_dialog(
-			session_handle,
-			function(err,dialog_ans) {
-			    if (err) {throw err;}
-			    callback(err,dialog_ans);
-			});
-		} else if ( candidate_rr_i > 0) {
-		    // RRを選択
-		    
-		    var i_ans = getRandomInt(candidate_rr_i);
-		    session_handle.rr_name = candidate_rr[i_ans];
-		    session_handle.sc_name = candidate_rr_sc[i_ans];
-		    watson_rr(
-			session_handle,
-			function(err,ans) {
-			    if (err) {throw err;}
-			    callback(err,ans);
-			});
-		}
-
-		// NLCレベルでの応答
-		msg = "確度 " 
-		    + session_handle.nlc_pst + "％で\n「" 
-		    + session_handle.nlc_class
-		    + "」と判断\n\n";
-
-		msg = msg + candidate_reply[decided_reply_i];
-		callback(null, {phrase : msg});
-
-	    } else {
-		callback(null, {phrase : 'なんと反応して良いか解りません'});
+	    } else if (body.docs[ans_i].dialog_name.length > 0) {
+		session_handle.mode = DIALOG_MODE;
+		session_handle.dialog = {
+		    input: session_handle.input_text,
+		    name: body.docs[ans_i].dialog_name
+		};
+		watson_dialog(session_handle,function(err,dialog_ans) {
+		    if (err) {throw err;}
+		    callback(err,dialog_ans);
+		});
+	    } else if (body.docs[ans_i].rr_name.length > 0) {
+		session_handle.rr_name = body.docs[ans_i].rr_name;
+		session_handle.sc_name = body.docs[ans_i].sc_name;
+		watson_rr( session_handle, function(err,ans) {
+		    if (err) {throw err;}
+		    callback(err,ans);
+		});
 	    }
+
 	} else {
 	    callback(null, {phrase : 'リアクションDBに反応候補がありません'});
 	}
