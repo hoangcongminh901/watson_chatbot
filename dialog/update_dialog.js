@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 //
-// テンプレートを読ませてダイアログを更新する
-// 作成したダイアログのIDと名前はCloudant のwatson_credentialsのDB
-// に格納される。
-// 
-// Maho Takara 
+// dialog_id.json を読んで、Dialogの定義XMLの更新する
 //
-// 2016/3/24 初版
-// 2016/5/8  Cloudantと連携した形に修正
+// 作者 Maho Takara    takara@jp.ibm.com
+//
+// Copyright (C) 2016 International Business Machines Corporation 
+// and others. All Rights Reserved. 
+// 
+// 2016/8/15  初版
+//
 //
 
 var fs     = require('fs');

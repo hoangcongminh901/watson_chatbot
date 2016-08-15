@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 //
-// ダイアログのリストを Watson から取得する
+// Watson Dialog のインスタンスをリストする
 // 
-// Maho Takara
-// 2016/3/24 v1
-// 2016/5/8  update
+// 作者 Maho Takara    takara@jp.ibm.com
+//
+// Copyright (C) 2016 International Business Machines Corporation 
+// and others. All Rights Reserved. 
+// 
+// 2016/8/15  初版
+//
 //
 
 var fs     = require('fs');

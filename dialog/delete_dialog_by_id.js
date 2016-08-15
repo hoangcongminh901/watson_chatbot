@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 //
+// このコードの中のdialog_idを編集してインスタンスを削除する
+// dialog_id を知るには、list_dialogs.js を実行すると良い
 //
-// 作成したダイアログをダイアログ名を指定して削除する
-// Watson Dialog からと Cloudant の watson_credentials　の二つから削除する 
+// 作者 Maho Takara    takara@jp.ibm.com
 //
-// 2016/5/8 Maho Takara
+// Copyright (C) 2016 International Business Machines Corporation 
+// and others. All Rights Reserved. 
+// 
+// 2016/8/15  初版
 //
 //
 

@@ -1,12 +1,15 @@
 #!/usr/bin/env node
 //
-// ワトソンダイアログに、メッセージを送る
-// 返ってきたメッセージをMQTTで端末へ返す
+// dialog_id.json を読んで、ターミナルで対話型で単体テストを実施する
 // 
-// Maho Takara
-// 2016/4/9 1st
-// 2016/5/8 update
-// 2016/5/14 起動時に例外発生の原因修正
+//
+// 作者 Maho Takara    takara@jp.ibm.com
+//
+// Copyright (C) 2016 International Business Machines Corporation 
+// and others. All Rights Reserved. 
+// 
+// 2016/8/15  初版
+//
 //
 
 var fs     = require('fs');
