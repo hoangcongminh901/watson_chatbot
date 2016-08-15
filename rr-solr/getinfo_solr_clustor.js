@@ -1,8 +1,15 @@
 #!/usr/bin/env node
 //
-// Solr clusterの情報を取得する
+// IBM Watson R&R に Apache Solr Cluster の作成状態を確認する
+//  
+//
+// 作者 Maho Takara    takara@jp.ibm.com
+//
+// Copyright (C) 2016 International Business Machines Corporation 
+// and others. All Rights Reserved. 
 // 
-// 2016/3/28 Maho Takara
+// 2016/8/15  初版
+//
 //
 
 var fs     = require('fs');

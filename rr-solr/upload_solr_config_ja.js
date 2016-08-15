@@ -1,8 +1,17 @@
 #!/usr/bin/env node
 //
-// Solr clusterの設定を登録する
+//  Apache Solr Cluster の設定を登録する
+//   設定ファイルをzipでまとめて登録する
+//   登録する前に、
+//   zipファイルを作るためmake_config_pkg.shを実行する
+//
+//  作者 Maho Takara    takara@jp.ibm.com
+//
+// Copyright (C) 2016 International Business Machines Corporation 
+// and others. All Rights Reserved. 
 // 
-// 2016/3/28 Maho Takara
+// 2016/8/15  初版
+//
 //
 
 var fs     = require('fs');

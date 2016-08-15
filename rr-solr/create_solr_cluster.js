@@ -1,9 +1,18 @@
 #!/usr/bin/env node
 //
-// Solr clusterを作成する
-// 
-// 2016/3/27 Maho Takara
+// IBM Watson R&R に Apache Solr Cluster を作成する
+//  結果はcluster_id.json に書き出す
+//  Clusterの作成状況は、getinfo_solr_clustor.js で確認する
+//  
 //
+// 作者 Maho Takara    takara@jp.ibm.com
+//
+// Copyright (C) 2016 International Business Machines Corporation 
+// and others. All Rights Reserved. 
+// 
+// 2016/8/15  初版
+//
+
 
 var fs     = require('fs');
 var auth   = require('./watson.rtrv_rank.auth.json');
