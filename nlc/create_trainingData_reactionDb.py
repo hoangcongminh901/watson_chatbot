@@ -1,6 +1,19 @@
 #!/usr/bin/env python                                                           
 # -*- coding:utf-8 -*-                                                          
-#                                                                               
+#
+# CSVファイルから、トレーニングデータとリアクションのDBを作成する
+# 　　リアクションのDBは、Cloudant上にストアする
+#     トレーニングデータは、nlcに取り込むcsv形式で書き出す
+#　　 トレーニングファイル名は、nlc_config.json に定義
+#
+# 作者 Maho Takara    takara@jp.ibm.com
+#
+# Copyright (C) 2016 International Business Machines Corporation 
+# and others. All Rights Reserved. 
+# 
+# 2016/8/15  初版
+#
+
 import json
 import csv
 import codecs
