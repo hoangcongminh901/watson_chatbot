@@ -109,7 +109,7 @@ linebot.on('message', function (msg) {
 	    // テキスト
 	    if ( msg.result[0].content.contentType == 1) {
 		write_log("=== LINEからテキスト受信 ===");
-		write_log("メッセージ:" + msg.result[0].content.text);
+		write_log("受信TEXT> " + msg.result[0].content.text);
 
 		watson_input_data = {
 		    text: msg.result[0].content.text,
@@ -125,6 +125,7 @@ linebot.on('message', function (msg) {
 		// Watson Chat Bot メイン
 		watson_chatbot_main(session[msg.result[0].content.from],
 				    function(err,watson_ans) {
+					write_log("応答TEXT> " + watson_ans.phrase);
 					// 送信元へメッセージ送信
 					linebot.sendMessage(
 					    msg.result[0].content.from,
@@ -170,37 +171,31 @@ linebot.on('message', function (msg) {
 
 /*
   Watson Chat Bot メイン処理
-     NLCにかけて、その後の処理を選択する
-     処理モード
-       NLCチャットモード（デフォルト）
-       DIALOGモード
-       NLCの結果で、DIALOGモードに切り替える
+     状態(MODE)で処理を振り分ける
  */
 function watson_chatbot_main( session_handle, callback) {
 
     if (session_handle.mode == DIALOG_MODE) {
-	// ダイアログ（対話）機能
+	// Dialog 対話
 	watson_dialog(
 	    session_handle,
 	    function(err,dialog_ans) {
 		if (err) {throw err;}
-		write_log("ワトソン> " + dialog_ans.phrase);
 		callback(err,dialog_ans);
 	    });
     } else if ( session_handle.mode == RR_MODE) {
+	// R & R
 	watson_retrieve(
 	    session_handle,
 	    function(err,rr_ans) {
-		write_log("ワトソン> " + rr_ans.phrase);
 		callback(err,rr_ans);
 	    });
 	session_handle.mode = NLC_MODE;
     } else {
-	// 自然言語分類
+	// 自然言語分類 NLC
 	watson_nlc(
 	    session_handle,
 	    function(err,nlc_ans) {
-		write_log("ワトソン> " + nlc_ans.phrase);
 		callback(err,nlc_ans);
 	    });
     }
@@ -219,9 +214,9 @@ function watson_nlc(session_handle,callback) {
 
 	    // 判別されたクラスをリスト
 	    for(var i = 0;i < resp.classes.length; i++) {
-		if (resp.classes[i].confidence > 0.2) {
-		    write_log("クラス=" + resp.classes[i].class_name 
-			      + "  確信度= " + parseInt(resp.classes[i].confidence * 100 )
+		if (resp.classes[i].confidence > 0.01) {
+		    write_log(" [" + i + "]" + " NLC CLASS= " + resp.classes[i].class_name 
+			      + "、確信度= " + parseInt(resp.classes[i].confidence * 100 )
 			      + "%");
 		}
 	    }
@@ -268,32 +263,37 @@ function getRandomInt(max) {
 */
 function take_action(session_handle,callback) {
 
-    // データベースからアクションを決定
+    write_log("対応DB 検索 NLC_CLASS= " + session_handle.nlc_class);
+    
+    // 対応DB 検索
     pdb.find( {"selector": {"class": session_handle.nlc_class}} ,function(err, body) {
 	if (err) {
 	    write_log("find error:", err);
 	    callback(err,null);
 	}
-	write_log("検索結果ヒット数 = " + body.docs.length);
+	write_log("対応DB 候補Hit数= " + body.docs.length);
 
-	/*
-	  NLCの分類結果からアクションを決める
-	  ヒットした解答候補の中から乱数で選択する
-	  外部機能があれば実行して、応答メッセージを決める
-	 */
+
 	if (body.docs.length) {
+	    // DEBUG 候補をログに出力
+	    for (var i=0;i<body.docs.length;i++) {
+		write_log(" [" + i + "] " + body.docs[i].reply_phrase);
+	    }
 
+	    // 簡易処理　ヒットした解答候補の中から乱数で選択する
 	    var ans_i = getRandomInt( body.docs.length);
+
 	    var msg;
-	    // NLCレベルでの応答
+	    // DEBUG NLCレベルでの応答
 	    msg = "確度 " 
 		+ session_handle.nlc_pst + "％で\n「" 
 		+ session_handle.nlc_class
 		+ "」と判断\n\n";
-	    
 	    msg = msg + body.docs[ans_i].reply_phrase;
+	    // NLCレベルのレスポンス
 	    callback(null, {phrase : msg});
 
+	    // 選択結果に Dialog, RR, 外部APIの定義に従って、次のモジュールをCALL
 	    if (body.docs[ans_i].reaction.length > 0) {
 		eval( body.docs[ans_i].reaction 
 		      + "(session_handle,function(err,rsp){callback(err,rsp)});");
@@ -308,6 +308,7 @@ function take_action(session_handle,callback) {
 		    callback(err,dialog_ans);
 		});
 	    } else if (body.docs[ans_i].rr_name.length > 0) {
+		session_handle.mode = RR_MODE;
 		session_handle.rr_name = body.docs[ans_i].rr_name;
 		session_handle.sc_name = body.docs[ans_i].sc_name;
 		watson_rr( session_handle, function(err,ans) {
@@ -319,9 +320,9 @@ function take_action(session_handle,callback) {
 	} else {
 	    callback(null, {phrase : 'リアクションDBに反応候補がありません'});
 	}
-	console.log("DEBUG action_reply L2 を抜けたぞ");
+	//console.log("DEBUG action_reply L2 を抜けたぞ");
     });
-    console.log("DEBUG action_reply L1 を抜けたぞ");
+    //console.log("DEBUG action_reply L1 を抜けたぞ");
 }
 
 

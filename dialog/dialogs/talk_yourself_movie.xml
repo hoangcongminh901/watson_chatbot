@@ -114,11 +114,7 @@
 			    <prompt selectionType="RANDOM">
 			      <item>はーい</item>
 			    </prompt>
-
-			    <goto ref="capture_rate">
-			      <action varName="Complete"   operator="SET_TO_YES"/>
-			    </goto>
-
+			    <goto ref="capture_rate"/>
 			  </output>
 			</input>
 			

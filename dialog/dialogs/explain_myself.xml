@@ -18,6 +18,8 @@
                 <output>
                   <prompt selectionType="RANDOM">
                     <item>質問の意味が判らなくて、ごめんなさい。別の言い方で試してみてね。</item>
+                    <item>質問タイムを終了する時は、「終了」とか「おわり」とか言ってね。</item>
+                    <item>質問タイムなんだけど、終わるなら「終了」とか言ってね。</item>
                   </prompt>
                 </output>
               </default>
