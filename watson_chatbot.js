@@ -11,6 +11,9 @@
 // 2016/8/15  初版
 //
 
+// DEBUG SW  ON;1, OFF;0
+const __DEBUG = 1;
+
 // 共通
 var fs = require('fs');
 var async = require('async');
@@ -130,14 +133,14 @@ linebot.on('message', function (msg) {
 					linebot.sendMessage(
 					    msg.result[0].content.from,
 					    watson_ans.phrase);
-					console.log(session[msg.result[0].content.from]);
+					//console.log(session[msg.result[0].content.from]);
 				    });
 		
 	    }
 	    // 画像
 	    else if ( msg.result[0].content.contentType == 2) {
 		write_log("=== LINEから画像受信 ===");
-		console.log(msg.result[0].content);
+		//console.log(msg.result[0].content);
 		var uploaded_file = 'vr/images/' + msg.result[0].content.id + '.jpg';
 		linebot.getContent(msg.result[0].content.id,uploaded_file);
 		session[msg.result[0].content.from].image_file = uploaded_file
@@ -153,17 +156,17 @@ linebot.on('message', function (msg) {
 	    // 音源
 	    else if ( msg.result[0].content.contentType == 4) {
 		write_log("=== LINEから音源受信 ===");
-		console.log(msg.result[0].content);
+		//console.log(msg.result[0].content);
 	    }
 	    // スタンプ
 	    else if ( msg.result[0].content.contentType == 8) {
 		write_log("=== LINEからスタンプ受信 ===");
-		console.log(msg.result[0].content);
+		//console.log(msg.result[0].content);
 	    }
 	    // その他
 	    else {
 		write_log("=== LINEからその他受信 ===");
-		console.log(msg.result[0].content);
+		//console.log(msg.result[0].content);
 	    }
 	});
 });
@@ -282,15 +285,19 @@ function take_action(session_handle,callback) {
 
 	    // 簡易処理　ヒットした解答候補の中から乱数で選択する
 	    var ans_i = getRandomInt( body.docs.length);
+	    // =================================================
 
-	    var msg;
+	    var msg = "";
 	    // DEBUG NLCレベルでの応答
-	    msg = "確度 " 
-		+ session_handle.nlc_pst + "％で\n「" 
-		+ session_handle.nlc_class
-		+ "」と判断\n\n";
-	    msg = msg + body.docs[ans_i].reply_phrase;
+	    if (__DEBUG) {
+		msg = "確度 " 
+		    + session_handle.nlc_pst + "％で\n「" 
+		    + session_handle.nlc_class
+		    + "」と判断\n\n";
+	    }
+
 	    // NLCレベルのレスポンス
+	    msg = msg + body.docs[ans_i].reply_phrase;
 	    callback(null, {phrase : msg});
 
 	    // 選択結果に Dialog, RR, 外部APIの定義に従って、次のモジュールをCALL
@@ -298,7 +305,7 @@ function take_action(session_handle,callback) {
 		eval( body.docs[ans_i].reaction 
 		      + "(session_handle,function(err,rsp){callback(err,rsp)});");
 	    } else if (body.docs[ans_i].dialog_name.length > 0) {
-		session_handle.mode = DIALOG_MODE;
+
 		session_handle.dialog = {
 		    input: session_handle.input_text,
 		    name: body.docs[ans_i].dialog_name
@@ -308,7 +315,6 @@ function take_action(session_handle,callback) {
 		    callback(err,dialog_ans);
 		});
 	    } else if (body.docs[ans_i].rr_name.length > 0) {
-		session_handle.mode = RR_MODE;
 		session_handle.rr_name = body.docs[ans_i].rr_name;
 		session_handle.sc_name = body.docs[ans_i].sc_name;
 		watson_rr( session_handle, function(err,ans) {
@@ -320,9 +326,9 @@ function take_action(session_handle,callback) {
 	} else {
 	    callback(null, {phrase : 'リアクションDBに反応候補がありません'});
 	}
-	//console.log("DEBUG action_reply L2 を抜けたぞ");
+	if (__DEBUG) console.log("DEBUG action_reply L2 を抜けたぞ");
     });
-    //console.log("DEBUG action_reply L1 を抜けたぞ");
+    if (__DEBUG) console.log("DEBUG action_reply L1 を抜けたぞ");
 }
 
 
@@ -337,11 +343,12 @@ function watson_dialog(session_handle, callback) {
 	session_handle.dialog.input = session_handle.input_text;
     }
 
-
     // DIALOGサービスの名称からインスタンスのIDを取得する
     dialog.getDialogs({}, function(err, resp) {
+	session_handle.mode = NLC_MODE;
 	if (err) {
 	    console.log("error =", err);
+	    //callback(err,null);
 	    return;
 	}
 
@@ -363,6 +370,7 @@ function watson_dialog(session_handle, callback) {
 	    return;
 	}
 
+	session_handle.mode = DIALOG_MODE;
 	var param = {}
 	if ( session_handle.dialog.conversation == undefined ) {
 	    param = {
@@ -398,11 +406,10 @@ function watson_dialog(session_handle, callback) {
 	    conversation_reply.dialog_id = dialog_id;
 	    dialog.getProfile(conversation_reply, function(err, profile) {
 		if (err) {
-		    console.log(err);
+		    //console.log(err);
 		    throw err;
 		}
-		console.log("profile = ", profile);
-
+		//console.log("profile = ", profile);
 		// Dialog終了を判定して、NLCチャットモードに戻す
 		for(var i = 0; i < profile.name_values.length; i++) {
 		    if (profile.name_values[i].name == 'Complete' &&
@@ -452,19 +459,21 @@ function watson_rr(session_handle, callback) {
 		}
 		else {
 		    if (resp.response.docs.length > 0) {
-
-			var msg = "回答の候補は、";
-			for (var i=0;i < resp.response.docs.length; i++) {
-			    console.log("R&R Candidate = ",resp.response.docs[i].id," ",resp.response.docs[i].title);
-			    if ( i < 3 ) {
-				msg = msg + "\n[" + resp.response.docs[i].id + "] " 
-				    + resp.response.docs[i].title + "、";
+			if (__DEBUG) {
+			    var msg = "回答の候補は、";
+			    for (var i=0;i < resp.response.docs.length; i++) {
+				console.log("R&R Candidate = ",resp.response.docs[i].id," ",resp.response.docs[i].title);
+				if ( i < 3 ) {
+				    msg = msg + "\n[" + resp.response.docs[i].id + "] " 
+					+ resp.response.docs[i].title + "、";
+				}
 			    }
+			    msg = msg + "\n[番号]を答えると内容を返すよ";
+			    session_handle.mode = RR_MODE;
+			    callback(null, { phrase: msg});
+			} else {
+			    callback(null, { phrase: resp.response.docs[0].body[0]});
 			}
-			msg = msg + "\n[番号]を答えると内容を返すよ";
-			session_handle.mode = RR_MODE;
-			callback(null, { phrase: msg});
-
 		    } else {
 			callback(null, { phrase: "該当の回答がありません" });
 		    }
@@ -492,8 +501,8 @@ function watson_retrieve(session_handle,callback) {
 	    console.log('Error searching for documents: ' + err);
 	}
 	else {
-	    console.log('Found ' + searchResponse.response.numFound + ' documents.');
-	    console.log(JSON.stringify(searchResponse.response.docs, null, 2));
+	    //console.log('Found ' + searchResponse.response.numFound + ' documents.');
+	    //console.log(JSON.stringify(searchResponse.response.docs, null, 2));
 	    if ( searchResponse.response.numFound > 0) {
 		msg = searchResponse.response.docs[0].body[0];
 	    } else  {
@@ -520,16 +529,12 @@ function watson_vr(session_handle, callback) {
 	    if (err) {
 		console.log(err);
 	    } else {
-		console.log("vr_classify = ", JSON.stringify(res, null, 2));
+		//console.log("vr_classify = ", JSON.stringify(res, null, 2));
 		if (res.images[0].classifiers[0].classes.length > 0) {
-
-
 		    if (res.images[0].classifiers[0].classes[0].class == 'person') {
-
 			var params_face = {
 			    images_file: fs.createReadStream(session_handle.image_file)
 			};
-
 			vr.detectFaces(params_face, function(err, res) {
 			    if (err) {
 				console.log(err);
