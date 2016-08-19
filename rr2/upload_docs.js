@@ -23,7 +23,7 @@ var rr_cnf = require('./rr_config.json');
 params.collection_name = rr_cnf.collection_name;
 
 solrClient = retrieve_and_rank.createSolrClient(params);
-console.log('Indexing a document...');
+console.log('Uploading documents ...');
 var path = rr_cnf.docs_path;
 var files = fs.readdirSync(path);
 

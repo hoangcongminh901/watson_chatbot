@@ -12,7 +12,8 @@
 //
 
 // DEBUG SW  ON;1, OFF;0
-const __DEBUG = 1;
+const __DEBUG = 0;
+const __ROFF = 0;
 
 // 共通
 var fs = require('fs');
@@ -193,6 +194,7 @@ function watson_chatbot_main( session_handle, callback) {
 	    function(err,rr_ans) {
 		callback(err,rr_ans);
 	    });
+	
 	session_handle.mode = NLC_MODE;
     } else {
 	// 自然言語分類 NLC
@@ -317,10 +319,16 @@ function take_action(session_handle,callback) {
 	    } else if (body.docs[ans_i].rr_name.length > 0) {
 		session_handle.rr_name = body.docs[ans_i].rr_name;
 		session_handle.sc_name = body.docs[ans_i].sc_name;
-		watson_rr( session_handle, function(err,ans) {
-		    if (err) {throw err;}
-		    callback(err,ans);
-		});
+		if (__ROFF) {
+		    search_solr_collection( session_handle,function(err,rr_ans) {
+			callback(err,rr_ans);
+		    });
+		} else {
+		    watson_rr( session_handle, function(err,ans) {
+			if (err) {throw err;}
+			callback(err,ans);
+		    });
+		}
 	    }
 
 	} else {
@@ -425,6 +433,7 @@ function watson_dialog(session_handle, callback) {
 	});
     });
 }
+
 // R&Rを利用した応答
 function watson_rr(session_handle, callback) {
 
@@ -484,6 +493,7 @@ function watson_rr(session_handle, callback) {
 }
 
 
+// R&R ID指定で、一つの文書を取得
 function watson_retrieve(session_handle,callback) {
 
     var msg;
@@ -594,3 +604,32 @@ function watson_vr(session_handle, callback) {
     });
     
 }
+
+
+
+// 全文検索した場合
+function search_solr_collection(session_handle, callback) {
+    console.log("=========== Solr Collection ===============");
+    session_handle.mode = NLC_MODE;
+    rr_pra.config_name = rr_cnf.config_name;
+    rr_pra.collection_name = session_handle.sc_name
+    rr_pra.wt = 'json';
+    var solrClient = rr.createSolrClient(rr_pra);
+    var query = solrClient.createQuery();
+    query.q({ 'input text' : session_handle.input_text });
+    
+    solrClient.search(query, function(err, searchResponse) {
+	if(err) {
+	    console.log('Error searching for documents: ' + err);
+	}
+	else {
+	    if ( searchResponse.response.numFound > 0) {
+		msg = searchResponse.response.docs[0].body[0];
+	    } else  {
+		msg = "答えが見つかりませんでした。";
+	    }
+	}
+	callback(null, { phrase: msg});
+    });
+}
+
