@@ -19,7 +19,7 @@ $ ./upload_solr_config_ja.js
 === rr1やrr2のディレクトリで、コレクションとランカー作成 ===
 
 $ ./create_solr_collection.js 
-$ ./index_doc_ja.js 
+$ ./upload_docs.js 
 $ ./create_ranker_with_data.js
 $ ./get_ranker_info.js 
   "status"が、"Training" から "Available" に変わるまで待つ
