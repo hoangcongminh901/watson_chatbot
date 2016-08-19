@@ -26,13 +26,15 @@ params.config_name = rr_cnf.config_name;
 params.collection_name = rr_cnf.collection_name;
 params.wt = 'json';
 
+var question  = 'ガンダムとは何ですか';
 
-var question  = 'q=モビルスーツとは何ですか';
-console.log("ニンゲンの質問= " + question);
+var qstring = 'q=' + question;
+console.log("質問= " + question);
 
-var query = qs.stringify({q: question, ranker_id: ranker.ranker_id, fl: 'id,title,body'});
+
+var query = qs.stringify({q: qstring, ranker_id: ranker.ranker_id, fl: 'id,title,body'});
 var solrClient = retrieve_and_rank.createSolrClient(params);
-
+var sw = 1;
 
 solrClient.get('fcselect', query, function(err, searchResponse) {
     if(err) {
@@ -40,7 +42,16 @@ solrClient.get('fcselect', query, function(err, searchResponse) {
     }
     else {
 	console.log('Found ' + searchResponse.response.numFound + ' documents.');
-	console.log(JSON.stringify(searchResponse.response.docs, null, 2));
+	if (sw) {
+	    console.log('---------');
+	    for (var i=0;i<searchResponse.response.docs.length;i++) {
+		console.log("[" + searchResponse.response.docs[i].id + "] ",
+			    searchResponse.response.docs[i].title[0]);	    
+	    }
+	    console.log('---------');
+	} else {
+	    console.log(JSON.stringify(searchResponse.response.docs, null, 2));
+	}
     }
 });
 

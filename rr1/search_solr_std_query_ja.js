@@ -24,8 +24,13 @@ params.wt = 'json';
 
 var solrClient = retrieve_and_rank.createSolrClient(params);
 var query = solrClient.createQuery();
-var qtext = 'ガンダムとは何ですか';             // インデックスで見つかったものが表示
+
+var qtext = 'ガンダムとは何ですか';
+
+console.log("質問= " + qtext);
+
 query.q({ 'input text' : qtext });
+var sw = 1;
 
 solrClient.search(query, function(err, searchResponse) {
     if(err) {
@@ -33,7 +38,18 @@ solrClient.search(query, function(err, searchResponse) {
     }
     else {
 	console.log('Found ' + searchResponse.response.numFound + ' documents.');
-	console.log(JSON.stringify(searchResponse.response.docs, null, 2));
+	if (sw) {
+	    console.log('---------');
+	    for (var i=0;i<searchResponse.response.docs.length;i++) {
+		console.log("[" + searchResponse.response.docs[i].id + "] ",
+			    //searchResponse.response.docs[i].title[0]);	    
+			    searchResponse.response.docs[i].title);	    
+	    }
+	    console.log('---------');
+	} else {
+	    console.log(JSON.stringify(searchResponse.response.docs, null, 2));
+	}
+
     }
 });
 
