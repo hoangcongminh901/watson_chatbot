@@ -21,9 +21,9 @@ var dialog = watson.dialog(auth.dialog[0].credentials);
 
 var itemno = 4;
 var params = {
-    name: cnf.dialog[itemno].name,
-    file: fs.createReadStream(cnf.dialog[itemno].file),
-    language: cnf.dialog[itemno].lang
+    name: cnf.dialogs[itemno].name,
+    file: fs.createReadStream(cnf.dialogs[itemno].file),
+    language: cnf.dialogs[itemno].lang
 }
 
 dialog.createDialog( params, function(err,resp) {

@@ -19,7 +19,7 @@ var params = require('./dialog_id.json');
 var dialog = watson.dialog(auth.dialog[0].credentials);
 
 var itemno = 2;
-params.file = fs.createReadStream(cnf.dialog[itemno].file),
+params.file = fs.createReadStream(cnf.dialogs[itemno].file),
 
 dialog.updateDialog(params, function(err, resp) {
     if (err) {
