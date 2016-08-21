@@ -3,7 +3,7 @@
 IBM Watson API を利用した Chat Bot のコードです。
 
 
-# Bluemix, SoftLayer などのアカウントについて
+## Bluemix, SoftLayer などのアカウントについて
 
 このコードを実行するためには、次のアカウントが必要です。
 
@@ -16,17 +16,17 @@ IBM Watson API を利用した Chat Bot のコードです。
 Bluemix, SoftLayerは、登録から1ヶ月間は無料で利用できます。また、Bluemixは、毎月の無料枠のを利用して無料で利用する事もできます。
 
 
-# Nodeのバージョンについて
+## Nodeのバージョンについて
 
-このChat Bot コードは、foever で バックグランドで 動作させるために node v0.12.9 を使う様に開発しています。 複数のNode.js のバージョンを動かす方法は、Qiita 「node.js のバージョン管理ツール ndenv を試した」(http://qiita.com/MahoTakara/items/8fdebe32e8f326afa7f8) を参照してください。
+このChat Bot コードは、foever で バックグランドで 動作させるために Node v0.12.9 を使う様に開発しています。 複数のNode.js のバージョンを動かす方法は、Qiita 「node.js のバージョン管理ツール ndenv を試した」(http://qiita.com/MahoTakara/items/8fdebe32e8f326afa7f8) を参照してください。
 
 
-# Python のバージョンについて
+## Python のバージョンについて
 
 このセットアップ用のコードの一部に、Python 2.7.10 を利用して、開発しています。pyenv を利用して、Linux ディストリビューションに含まれない Python のバージョンをインストールする方法は、Qiita 「pyenv と slcli コマンドをインストールする手順」(http://qiita.com/MahoTakara/items/cbd861112b00da82c95b) の「pyenv の導入と設定」の章を参照してください。
 
 
-# 前提 Bluemix API サービス について
+## 前提 Bluemix API サービス について
 
 このアプリケーションを動作させるための Bluemix の API サービスは以下です。
 
@@ -39,27 +39,38 @@ Bluemix, SoftLayerは、登録から1ヶ月間は無料で利用できます。�
 Bluemix にログインして、各インスタンス１個を作成して、サービス資格情報(JSON形式)をコピペできる様にしてくください。 
 
 
-# ファイルの説明
+## LINE BOT API について
 
-LICENSE
-README.md
-watson_chatbot.js
-
-cloudant_credentials_id.json
-line_api_credential.json
-openweathermap.json
-lets_encript.key
-lets_encript_fullchain.crt
-
-nlc/
-dialog/
-rr-solr/
-rr1/
-rr2/
-vr/
+LINE BOT API の Node APIライブラリは https://github.com/laziel/line-bot から fork した https://github.com/takara9/line-bot を利用します。 これにより Node v0.12.9 で動作が可能となり、LINE アカウントのプロファイル取得、写真などのファイルの取得ができる様になります。
 
 
-line_api/
-weather_report/
+## ファイルとフォルダの説明
 
-excel/
+- watson_chatbot.js             Chat Bot プログラム本体
+- cloudant_credentials_id.json  Cloudant のBluemix から付与される資格情報のファイル
+- nlc/                          NLCのインスタンス作成、訓練用コード、資格情報
+- dialog/                       Dialog の XMLスキーマ、登録用などのコード、資格情報
+- rr-solr/　　　　　　　　　　　R&R Solrクラスタ作成、訓練などのコード、資格情報
+- rr1/                          R&R Collection と Ranker 構築用コード 分野はガンダム
+- rr2/                          R&R Collection と Ranker 構築用コード 分野はクラウド
+- vr/                           Visual Recognition のテストコード、資格情報
+- line_api/                     LINE API コールバック用のコード
+- weather_report/               OpenWeatherMap用のコード、天気コードと名称変換DB構築
+- excel/                        NLC,R&R Ranker 訓練用、Cloudant 反応DBデータ
+
+
+
+- line_api_credential.json      LINE Develper の資格情報 Chennel ID, Secret, MID のファイル
+- openweathermap.json           OpenWatherMap の API Key の入ったファイル
+- lets_encript.key              Let Encript の プライベート鍵
+- lets_encript_fullchain.crt    Let Encript の 証明書
+
+
+
+# 技術資料
+
+- Watson Natural Language Classifier
+- Watson Retrieve and Rank
+- Watson Dialog
+- Watson Visual Recognition
+- Cloudant NoSQL DB
