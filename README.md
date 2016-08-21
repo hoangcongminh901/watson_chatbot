@@ -46,24 +46,33 @@ LINE BOT API の Node APIライブラリは https://github.com/laziel/line-bot �
 
 ## ファイルとフォルダの説明
 
-- watson_chatbot.js             Chat Bot プログラム本体
-- cloudant_credentials_id.json  Cloudant のBluemix から付与される資格情報のファイル
-- nlc/                          NLCのインスタンス作成、訓練用コード、資格情報
-- dialog/                       Dialog の XMLスキーマ、登録用などのコード、資格情報
-- rr-solr/　　　　　　　　　　　R&R Solrクラスタ作成、訓練などのコード、資格情報
-- rr1/                          R&R Collection と Ranker 構築用コード 分野はガンダム
-- rr2/                          R&R Collection と Ranker 構築用コード 分野はクラウド
-- vr/                           Visual Recognition のテストコード、資格情報
-- line_api/                     LINE API コールバック用のコード
-- weather_report/               OpenWeatherMap用のコード、天気コードと名称変換DB構築
-- excel/                        NLC,R&R Ranker 訓練用、Cloudant 反応DBデータ
+- watson_chatbot.js : Chat Bot プログラム本体
+- cloudant_credentials_id.json : Cloudant のBluemix から付与される資格情報のファイル
+- nlc/ : NLCのインスタンス作成、訓練用コード、資格情報
+- dialog/ : Dialog の XMLスキーマ、登録用などのコード、資格情報
+- rr-solr/ : R&R Solrクラスタ作成、訓練などのコード、資格情報
+- rr1/ : R&R Collection と Ranker 構築用コード 分野はガンダム
+- rr2/ : R&R Collection と Ranker 構築用コード 分野はクラウド
+- vr/ : Visual Recognition のテストコード、資格情報
+- line_api/ : LINE API コールバック用のコード
+- weather_report/ : OpenWeatherMap用のコード、天気コードと名称変換DB構築
+- excel/ : NLC,R&R Ranker 訓練用、Cloudant 反応DBデータ
 
 
+## 資格情報、証明書
 
-- line_api_credential.json      LINE Develper の資格情報 Chennel ID, Secret, MID のファイル
-- openweathermap.json           OpenWatherMap の API Key の入ったファイル
-- lets_encript.key              Let Encript の プライベート鍵
-- lets_encript_fullchain.crt    Let Encript の 証明書
+- line_api_credential.json : LINE Develper の資格情報 Chennel ID, Secret, MID のファイル
+- openweathermap.json : OpenWatherMap の API Key の入ったファイル
+- lets_encript.key : Let Encript の プライベート鍵
+- lets_encript_fullchain.crt : Let Encript の 証明書
+- nlc/watson_nlc_credentials.json : NLC の Bluemix 資格情報
+- dialog/watson_dialog_credentials.json : Dialog の Bluemix 資格情報
+- rr-solr/watson.rtrv_rank.auth.json : R&R の Bluemix 資格情報
+- rr1/cluster_id.json : シンボリックリンク ln -s ../rr-solr/cluster_id.json .
+- rr1/watson.rtrv_rank.auth.json : シンボリックリンク ln -s ../rr-solr/watson.rtrv_rank.auth.json .
+- rr2/cluster_id.json : シンボリックリンク ln -s ../rr-solr/cluster_id.json .
+- rr2/watson.rtrv_rank.auth.json : シンボリックリンク ln -s ../rr-solr/watson.rtrv_rank.auth.json .
+
 
 
 
