@@ -17,7 +17,7 @@
 - test_nlc.js
 
 
-## 定義ファイル
+## 定義ファイル、資格情報
 - nlc_config.json : NLCインスタンス名、トレーニングファイルの定義
 - nlc_id.json : create_nlc.js から作成されるNLCのidファイル
 - cloudant_credentials_id.json -> ../cloudant_credentials_id.json : Cloudant 資格情報

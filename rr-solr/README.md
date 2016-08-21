@@ -1,6 +1,4 @@
-
-
-# rr-solrのディレクトリで、Solrクラスター作成
+# Solrクラスター作成
 
 
 Solrクラスターの新規構築
@@ -25,7 +23,7 @@ $ ./upload_solr_config_ja.js
 ```
 
 
-## rr1やrr2のディレクトリで、コレクションとランカー作成 ===
+## rr1やrr2のディレクトリで、コレクションとランカー作成 
 
 ```
 $ ./create_solr_collection.js 
@@ -51,3 +49,23 @@ $ ./delete_ranker.js
 $ ./delete_solr_collection.js 
 $ ./delete_solr_cluster.js 
 ```
+
+
+## ファイルの解説
+
+- create_solr_cluster.js
+- delete_solr_cluster.js
+- delete_solr_config.js
+- getinfo_solr_clustor.js
+- list_solr_cluster.js
+- list_solr_config.js
+- upload_solr_config_ja.js
+
+
+## 定義ファイル
+- watson.rtrv_rank.auth.json
+- rr_config.json
+- cluster_id.json
+
+## Solr 定義ファイルの保存場所
+- solr_config_ja/

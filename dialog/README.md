@@ -11,6 +11,8 @@
 - unit_test_dialog.js : dialog_id.json の dialog_id に対して単体テスト
 - delete_dialog.js : dialog_id.json の dialog_id を削除
 - delete_dialog_by_id.js : 直接 dialog_id を編集して対話を削除
+
+## 設定、資格情報
 - dialog_id.json : 対話作成時に、付与されるdialog_idをJSON形式で保存したもの
 - dialog_config.json : 対話のXMLスキームファイルと名前を定義したもの
 - watson_dialog_credentials.json : Blumeix の Dialog 資格情報をコピペしたもの
