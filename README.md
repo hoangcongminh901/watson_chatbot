@@ -77,19 +77,25 @@ LINE BOT API の Node APIライブラリは https://github.com/laziel/line-bot �
 
 
 
-# Chat ボットの起動方法
+# チャット ボットの起動方法
 
+SoftLayer 仮想サーバーを起動する。 最小スペックは、Hourly CPU 1 core, RAM 1GB, Local DISK 25GB です。
+ユーザーを作成して、ndenv, pyenv をインストールして、実行環境を作成する。 GitHubからコードをサーバーにダウンロードする。
 
 
 ```
-tkr@tkr02:~/watson_chatbot$ pwd
-/home/tkr/watson_chatbot
+tkr@tkr02:~$ git clone https://github.com/takara9/watson_chatbot
+tkr@tkr02:~$ cd watson_chatbot
 ```
+前提となるサービスのBluemixのAPIサービスのインスタンスを作成して、クローンしたディレクトリに、前述の資格情報のJSONファイルを作成する。必要なnodeのバージョンをインストールして、ndenv で node のバージョンを確認する。
 
 ```
 tkr@tkr02:~/watson_chatbot$ ndenv local
 v0.12.9
+tkr@tkr02:~/watson_chatbot$ node -v
+v0.12.9
 ```
+foever を npm でインストールして、watson_chatbot.js をバックグランドで起動する。
 
 ```
 tkr@tkr02:~/watson_chatbot$ forever start ./watson_chatbot.js 
