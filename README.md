@@ -61,6 +61,8 @@ LINE BOT API の Node APIライブラリは https://github.com/laziel/line-bot �
 
 ## 資格情報、証明書
 
+以下のファイルは、それぞれ、手作業で作成する必要があります。
+
 - line_api_credential.json : LINE Develper の資格情報 Chennel ID, Secret, MID のファイル
 - openweathermap.json : OpenWatherMap の API Key の入ったファイル
 - lets_encript.key : Let Encript の プライベート鍵
@@ -73,6 +75,25 @@ LINE BOT API の Node APIライブラリは https://github.com/laziel/line-bot �
 - rr2/cluster_id.json : シンボリックリンク ln -s ../rr-solr/cluster_id.json .
 - rr2/watson.rtrv_rank.auth.json : シンボリックリンク ln -s ../rr-solr/watson.rtrv_rank.auth.json .
 
+
+
+# Chat ボットの起動方法
+
+
+
+```
+tkr@tkr02:~/watson_chatbot$ pwd
+/home/tkr/watson_chatbot
+```
+
+```
+tkr@tkr02:~/watson_chatbot$ ndenv local
+v0.12.9
+```
+
+```
+tkr@tkr02:~/watson_chatbot$ forever start ./watson_chatbot.js 
+```
 
 
 
