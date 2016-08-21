@@ -80,7 +80,7 @@ LINE BOT API の Node APIライブラリは https://github.com/laziel/line-bot �
 # チャット ボットの起動方法
 
 SoftLayer 仮想サーバーを起動する。 最小スペックは、Hourly CPU 1 core, RAM 1GB, Local DISK 25GB です。
-ユーザーを作成して、ndenv, pyenv をインストールして、実行環境を作成する。 GitHubからコードをサーバーにダウンロードする。
+一般ユーザーを作成して、そのHOMEディレクトリに、ndenv, pyenv をインストールして、Node.js と Python の実行環境を作成する。 GitHubからコードをサーバーにダウンロードする。
 
 
 ```
