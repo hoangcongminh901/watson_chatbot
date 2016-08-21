@@ -539,7 +539,7 @@ function watson_vr(session_handle, callback) {
 	    if (err) {
 		console.log(err);
 	    } else {
-		//console.log("vr_classify = ", JSON.stringify(res, null, 2));
+		console.log("vr_classify = ", JSON.stringify(res, null, 2));
 		if (res.images[0].classifiers[0].classes.length > 0) {
 		    if (res.images[0].classifiers[0].classes[0].class == 'person') {
 			var params_face = {
@@ -563,7 +563,7 @@ function watson_vr(session_handle, callback) {
 				    } else {
 					sex = "女性";
 					if (age > 30) {
-					    age = age - 5;  // rip service
+					    age = age - 5;  // rip service (^_^)/
 					}
 				    };
 				    message = "この方は、"
