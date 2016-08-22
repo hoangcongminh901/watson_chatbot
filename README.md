@@ -103,10 +103,12 @@ tkr@tkr02:~/watson_chatbot$ forever start ./watson_chatbot.js
 
 
 
-# 技術資料
+# API ライブラリ資料
 
-- Watson Natural Language Classifier
-- Watson Retrieve and Rank
-- Watson Dialog
-- Watson Visual Recognition
-- Cloudant NoSQL DB
+- Watson Natural Language Classifier ( http://www.ibm.com/watson/developercloud/natural-language-classifier/api/v1/ )
+- Watson Retrieve and Rank ( http://www.ibm.com/watson/developercloud/retrieve-and-rank/api/v1/ )
+- Watson Dialog ( http://www.ibm.com/watson/developercloud/dialog/api/v1/ )
+- Watson Visual Recognition ( http://www.ibm.com/watson/developercloud/visual-recognition/api/v3/ )
+- Cloudant NoSQL DB ( https://github.com/cloudant/nodejs-cloudant )
+- LINE BOD API ( https://github.com/takara9/line-bot )
+
